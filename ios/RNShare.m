@@ -47,6 +47,7 @@
 #import "FacebookStories.h"
 #import "GooglePlusShare.h"
 #import "EmailShare.h"
+#import "LINEShare.h"
 #import "RNShareActivityItemSource.h"
 #import "Utils.h"
 
@@ -111,7 +112,7 @@ RCT_EXPORT_MODULE()
     @"INSTAGRAM": @"instagram",
     @"INSTAGRAM_STORIES": @"instagramstories",
     @"EMAIL": @"email",
-
+    @"LINE": @"line",
     @"SHARE_BACKGROUND_IMAGE": @"shareBackgroundImage",
     @"SHARE_BACKGROUND_VIDEO": @"shareBackgroundVideo",
     @"SHARE_STICKER_IMAGE": @"shareStickerImage",
@@ -167,6 +168,10 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         } else if([social isEqualToString:@"email"]) {
             NSLog(@"TRY OPEN email");
+            [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
+        } else if([social isEqualToString:"line"]) {
+            NSLog(@"TRY OEPN LINE");
+            LINEShare *shareCtl = [[LINEShare alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         }
     } else {
