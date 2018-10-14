@@ -169,7 +169,7 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
         } else if([social isEqualToString:@"email"]) {
             NSLog(@"TRY OPEN email");
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
-        } else if([social isEqualToString:"line"]) {
+        } else if([social isEqualToString:@"line"]) {
             NSLog(@"TRY OEPN LINE");
             LINEShare *shareCtl = [[LINEShare alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
