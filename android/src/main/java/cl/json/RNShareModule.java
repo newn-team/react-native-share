@@ -23,6 +23,7 @@ import cl.json.social.FacebookStoriesShare;
 import cl.json.social.FacebookPagesManagerShare;
 import cl.json.social.GenericShare;
 import cl.json.social.GooglePlusShare;
+import cl.json.social.LineShare;
 import cl.json.social.ShareIntent;
 import cl.json.social.TargetChosenReceiver;
 import cl.json.social.TwitterShare;
@@ -68,6 +69,7 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
         instagramstories,
         instagramStories,
         googleplus,
+        line,
         email,
         pinterest,
         messenger,
@@ -99,6 +101,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     return new InstagramStoriesVideoAndStickerImageShare(reactContext);
                 case googleplus:
                     return new GooglePlusShare(reactContext);
+                case line:
+                    return new LineShare(reactContext);
                 case email:
                     return new EmailShare(reactContext);
                 case pinterest:
