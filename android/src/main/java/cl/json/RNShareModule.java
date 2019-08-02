@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 
+import com.facebook.react.common.ReactConstants;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -65,6 +66,7 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
         whatsapp,
         instagram,
         instagramstories,
+        instagramStories,
         googleplus,
         email,
         pinterest,
@@ -93,6 +95,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     return new InstagramShare(reactContext);
                 case instagramstories:
                     return new InstagramStoriesShare(reactContext);
+                case instagramStories:
+                    return new InstagramStoriesVideoAndStickerImageShare(reactContext);
                 case googleplus:
                     return new GooglePlusShare(reactContext);
                 case email:
