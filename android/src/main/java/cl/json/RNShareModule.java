@@ -27,6 +27,7 @@ import cl.json.social.TwitterShare;
 import cl.json.social.WhatsAppShare;
 import cl.json.social.InstagramShare;
 import cl.json.social.InstagramStoriesShare;
+import cl.json.social.InstagramStoriesVideoAndStickerImageShare;
 import cl.json.social.PinterestShare;
 import cl.json.social.SnapChatShare;
 import cl.json.social.SMSShare;
@@ -63,6 +64,7 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
         whatsapp,
         instagram,
         instagramstories,
+        instagramStoriesVideoAndStickerImage,
         googleplus,
         email,
         pinterest,
@@ -89,6 +91,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     return new InstagramShare(reactContext);
                 case instagramstories:
                     return new InstagramStoriesShare(reactContext);
+                case instagramStoriesVideoAndStickerImage:
+                    return new InstagramStoriesVideoAndStickerImageShare(reactContext);
                 case googleplus:
                     return new GooglePlusShare(reactContext);
                 case email:

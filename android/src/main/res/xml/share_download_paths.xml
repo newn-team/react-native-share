@@ -3,4 +3,10 @@
     <external-path name="rnshare1" path="Download/" />
     <cache-path name="rnshare2" path="/" />
     <root-path name="rnshare_sdcard" path="." />
+
+    <files-path name="files" path="." />
+    <external-files-path name="external_files" path="." />
+    <external-path name="external_files" path="." />
+    <cache-path name="cached_files" path="." />
+    <external-cache-path name="cached_files" path="." />
 </paths>
