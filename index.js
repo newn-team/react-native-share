@@ -189,8 +189,8 @@ class RNShare {
         .then(() => {
           if (Platform.OS === 'ios' && !options.urls) {
 
-            console.warn("[SHARE] !options.urls options")
-
+            console.warn("[SHARE] !options.urls")
+            console.warn("[SHARE] options.url: " + options.url + ", options.message: " + options.message)
             // Handle for single file share
             ActionSheetIOS.showShareActionSheetWithOptions(
               options,
