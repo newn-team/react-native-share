@@ -182,9 +182,15 @@ class RNShare {
 
   static open(options: Options | MultipleOptions): Promise<OpenReturn> {
     return new Promise((resolve, reject) => {
+
+      console.warn("[SHARE] " + options)
+
       requireAndAskPermissions(options)
         .then(() => {
           if (Platform.OS === 'ios' && !options.urls) {
+
+            console.warn("[SHARE] !options.urls options")
+
             // Handle for single file share
             ActionSheetIOS.showShareActionSheetWithOptions(
               options,
@@ -206,6 +212,9 @@ class RNShare {
               },
             );
           } else {
+
+            console.warn("[SHARE] options.urls")
+
             NativeModules.RNShare.open(
               options,
               e => {
