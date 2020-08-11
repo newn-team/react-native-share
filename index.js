@@ -188,12 +188,11 @@ class RNShare {
       requireAndAskPermissions(options)
         .then(() => {
           if (Platform.OS === 'ios' && !options.urls) {
-
-            console.warn("[SHARE] !options.urls")
-            console.warn("[SHARE] options.url: " + options.url + ", options.message: " + options.message)
             // Handle for single file share
-            ActionSheetIOS.showShareActionSheetWithOptions(
-              options,
+            ActionSheetIOS.showShareActionSheetWithOptions({
+                url: "https://dev-web.stand.fm/channels/5d722ada943a9fe3a809df18",
+                message: 'set0gut1チャンネル on stand.fm'
+              },
               error => {
                 return reject({ error: error });
               },
@@ -212,9 +211,6 @@ class RNShare {
               },
             );
           } else {
-
-            console.warn("[SHARE] options.urls")
-
             NativeModules.RNShare.open(
               options,
               e => {
