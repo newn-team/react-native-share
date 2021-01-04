@@ -178,14 +178,14 @@ backgroundBottomColor:(NSString *)backgroundBottomColor
             } else {
                 NSData *backgroundVideo = [[NSFileManager defaultManager] contentsAtPath: URL];
                 [self backgroundVideo: backgroundVideo];
-
+            }
         } else if([method isEqualToString:@"shareBackgroundVideoAndStickerImage"]) {
             RCTLog(@"method shareBackgroundVideoAndStickerImage");
             
             NSURL *backgroundVideoURL = [RCTConvert NSURL:options[@"backgroundVideo"]];
             NSURL *stickerURL = [RCTConvert NSURL:options[@"stickerImage"]];
-            
-            if (backgroundVideoURL == nil || sticketURL == nil) {
+
+            if (backgroundVideoURL == nil || stickerURL == nil) {
                 RCTLogError(@"key 'backgroundVideo' or 'stickerImage' missing in options");
             } else {
                 NSData *backgroundVideo = [NSData dataWithContentsOfURL:backgroundVideoURL];
