@@ -18,7 +18,7 @@ public class InstagramStoriesVideoAndStickerImageShare extends SingleShareIntent
     private static final String PACKAGE = "com.instagram.android";
     private static final String PLAY_STORE_LINK = "market://details?id=com.instagram.android";
 
-    public InstagramStoriesShare(ReactApplicationContext reactContext) {
+    public InstagramStoriesVideoAndStickerImageShare(ReactApplicationContext reactContext) {
         super(reactContext);
         this.setIntent(new Intent("com.instagram.share.ADD_TO_STORY"));
     }
