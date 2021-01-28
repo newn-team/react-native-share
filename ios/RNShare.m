@@ -44,11 +44,28 @@
 #import "WhatsAppShare.h"
 #import "InstagramShare.h"
 #import "InstagramStories.h"
+<<<<<<< HEAD
 #import "GooglePlusShare.h"
 #import "EmailShare.h"
 #import "LINEShare.h"
+=======
+#import "FacebookStories.h"
+#import "GooglePlusShare.h"
+#import "EmailShare.h"
+#import "RNShareActivityItemSource.h"
+#import "Utils.h"
+>>>>>>> upstream/master
 
 @implementation RNShare
+
+RCTResponseErrorBlock rejectBlock;
+RCTResponseSenderBlock resolveBlock;
+
+// we need this since this controller
+// may implement a delegate and could be garbage collected
+// before it is called
+EmailShare *shareCtl;
+
 - (dispatch_queue_t)methodQueue
 {
     return dispatch_get_main_queue();
@@ -57,6 +74,14 @@
 + (BOOL)requiresMainQueueSetup
 {
     return YES;
+}
+
+- (id) init
+{
+    if ((self = [super init])) {
+        shareCtl = [[EmailShare alloc] init];
+    }
+    return self;
 }
 
 - (CGRect)sourceRectInView:(UIView *)sourceView
@@ -85,14 +110,17 @@ RCT_EXPORT_MODULE()
 {
   return @{
     @"FACEBOOK": @"facebook",
+    @"FACEBOOK_STORIES": @"facebookstories",
     @"TWITTER": @"twitter",
     @"GOOGLEPLUS": @"googleplus",
     @"WHATSAPP": @"whatsapp",
     @"INSTAGRAM": @"instagram",
-    @"INSTAGRAM_STORIES": @"instagramStories",
+//     @"INSTAGRAM_STORIES": @"instagramStories",
     @"EMAIL": @"email",
     @"LINE": @"line",
-    
+    @"INSTAGRAM_STORIES": @"instagramstories",
+    @"EMAIL": @"email",
+
     @"SHARE_BACKGROUND_IMAGE": @"shareBackgroundImage",
     @"SHARE_BACKGROUND_VIDEO": @"shareBackgroundVideo",
     @"SHARE_STICKER_IMAGE": @"shareStickerImage",
@@ -105,14 +133,23 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
                   failureCallback:(RCTResponseErrorBlock)failureCallback
                   successCallback:(RCTResponseSenderBlock)successCallback)
 {
-
     NSString *social = [RCTConvert NSString:options[@"social"]];
     if (social) {
-        NSLog(social);
+        NSLog(@"%@", social);
         if([social isEqualToString:@"facebook"]) {
             NSLog(@"TRY OPEN FACEBOOK");
             GenericShare *shareCtl = [[GenericShare alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback serviceType: SLServiceTypeFacebook inAppBaseUrl:@"fb://"];
+        } else if([social isEqualToString:@"facebookstories"]) {
+            NSString *appId = [RCTConvert NSString:options[@"appId"]];
+            if (appId) {
+                NSLog(@"TRY OPEN FACEBOOK STORIES");
+                FacebookStories *shareCtl = [[FacebookStories alloc] init];
+                [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
+            } else {
+                RCTLogError(@"key 'appId' missing in options");
+                return;
+            }
         } else if([social isEqualToString:@"twitter"]) {
             NSLog(@"TRY OPEN Twitter");
             GenericShare *shareCtl = [[GenericShare alloc] init];
@@ -133,13 +170,16 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
             } else {
                 [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
             }
-        } else if([social isEqualToString:@"instagramStories"]) {
-            NSLog(@"TRY OPEN instagramStories");
+// <<<<<<< HEAD
+//         } else if([social isEqualToString:@"instagramStories"]) {
+//             NSLog(@"TRY OPEN instagramStories");
+// =======
+        } else if([social isEqualToString:@"instagramstories"]) {
+            NSLog(@"TRY OPEN instagram-stories");
             InstagramStories *shareCtl = [[InstagramStories alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         } else if([social isEqualToString:@"email"]) {
             NSLog(@"TRY OPEN email");
-            EmailShare *shareCtl = [[EmailShare alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         } else if([social isEqualToString:@"line"]) {
             NSLog(@"TRY OEPN LINE");
@@ -166,6 +206,7 @@ RCT_EXPORT_METHOD(open:(NSDictionary *)options
     if (message) {
         [items addObject:message];
     }
+    BOOL saveToFiles = [RCTConvert BOOL:options[@"saveToFiles"]];
     NSArray *urlsArray = options[@"urls"];
     for (int i=0; i<urlsArray.count; i++) {
         NSURL *URL = [RCTConvert NSURL:urlsArray[i]];
@@ -179,17 +220,52 @@ RCT_EXPORT_METHOD(open:(NSDictionary *)options
                     failureCallback(error);
                     return;
                 }
-                [items addObject:data];
+                if (saveToFiles) {
+                    NSURL *filePath = [Utils getPathFromBase64:URL.absoluteString with:data];
+                    if (filePath) {
+                        [items addObject: filePath];
+                    }
+                } else {
+                    [items addObject:data];
+                }
             } else {
                 [items addObject:URL];
             }
         }
     }
 
+    NSArray *activityItemSources = options[@"activityItemSources"];
+    if (activityItemSources) {
+        [activityItemSources enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            RNShareActivityItemSource *activityItemSource = [[RNShareActivityItemSource alloc] initWithOptions:obj];
+            [items addObject:activityItemSource];
+        }];
+    }
 
     if (items.count == 0) {
         RCTLogError(@"No `url` or `message` to share");
         return;
+    }
+
+    UIViewController *controller = RCTPresentedViewController();
+
+    if (saveToFiles) {
+        NSArray *urls = [items filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+            return [evaluatedObject isKindOfClass:[NSURL class]];
+        }]];
+
+        if (urls.count == 0) {
+            RCTLogError(@"No `urls` to save in Files");
+            return;
+        }
+        if (@available(iOS 11.0, *)) {
+            resolveBlock = successCallback;
+            rejectBlock = failureCallback;
+            UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithURLs:urls inMode:UIDocumentPickerModeExportToService];
+            [documentPicker setDelegate:self];
+            [controller presentViewController:documentPicker animated:YES completion:nil];
+            return;
+        }
     }
 
     UIActivityViewController *shareController = [[UIActivityViewController alloc] initWithActivityItems:items applicationActivities:nil];
@@ -204,11 +280,11 @@ RCT_EXPORT_METHOD(open:(NSDictionary *)options
         shareController.excludedActivityTypes = excludedActivityTypes;
     }
 
-    UIViewController *controller = RCTPresentedViewController();
     shareController.completionWithItemsHandler = ^(NSString *activityType, BOOL completed, __unused NSArray *returnedItems, NSError *activityError) {
         if (activityError) {
+            [controller  dismissViewControllerAnimated:true completion:nil];
             failureCallback(activityError);
-        } else {
+        } else if (completed || activityType == nil) {
             successCallback(@[@(completed), RCTNullIfNil(activityType)]);
         }
     };
@@ -226,5 +302,17 @@ RCT_EXPORT_METHOD(open:(NSDictionary *)options
     shareController.view.tintColor = [RCTConvert UIColor:options[@"tintColor"]];
 }
 
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
+    if (rejectBlock) {
+        NSError *error = [NSError errorWithDomain:@"CANCELLED" code: 500 userInfo:@{NSLocalizedDescriptionKey:@"PICKER_WAS_CANCELLED"}];
+        rejectBlock(error);
+    }
+}
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls {
+    if (resolveBlock) {
+        resolveBlock(@[@(YES), @"com.apple.DocumentsApp"]);
+    }
+}
 
 @end

@@ -2,6 +2,8 @@ package cl.json.social;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.net.Uri;
@@ -29,8 +31,14 @@ public abstract class SingleShareIntent extends ShareIntent {
         if (getPackage() != null || getDefaultWebLink() != null || getPlayStoreLink() != null) {
             if (this.isPackageInstalled(getPackage(), reactContext)) {
                 System.out.println("INSTALLED");
-                this.getIntent().setPackage(getPackage());
+                if (getComponentClass() != null) {
+                    ComponentName cn = new ComponentName(getPackage(), getComponentClass());
+                    this.getIntent().setComponent(cn);
+                } else {
+                    this.getIntent().setPackage(getPackage());
+                }
                 super.open(options);
+                return; // once we open we don't need to continue
             } else {
                 System.out.println("NOT INSTALLED");
                 String url = "";
@@ -52,11 +60,20 @@ public abstract class SingleShareIntent extends ShareIntent {
     }
 
     protected void openIntentChooser() throws ActivityNotFoundException {
+        this.openIntentChooser(null);
+    }
+
+    protected void openIntentChooser(ReadableMap options) throws ActivityNotFoundException {
         if (this.options.hasKey("forceDialog") && this.options.getBoolean("forceDialog")) {
             Activity activity = this.reactContext.getCurrentActivity();
             if (activity == null) {
                 TargetChosenReceiver.sendCallback(false, "Something went wrong");
                 return;
+            }
+            if (options != null) {
+                if (!ShareIntent.hasValidKey("social", options)) {
+                    throw new IllegalArgumentException("social is empty");
+                }
             }
             if (TargetChosenReceiver.isSupported()) {
                 IntentSender sender = TargetChosenReceiver.getSharingSenderIntent(this.reactContext);
@@ -70,7 +87,7 @@ public abstract class SingleShareIntent extends ShareIntent {
                 TargetChosenReceiver.sendCallback(true, true, "OK");
             }
         } else {
-            this.getIntent().setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.getIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             this.reactContext.startActivity(this.getIntent());
             TargetChosenReceiver.sendCallback(true, true, this.getIntent().getPackage());
         }

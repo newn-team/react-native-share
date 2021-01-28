@@ -13,7 +13,6 @@ import {
   BackHandler,
   NativeModules,
   Platform,
-  ActionSheetIOS,
   PermissionsAndroid,
 } from 'react-native';
 import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
@@ -21,6 +20,10 @@ import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet
 import Overlay from './components/Overlay';
 import Sheet from './components/Sheet';
 import Button from './components/Button';
+
+const ANDROID_KIT_KAT_SDK_VERSION = 19;
+const androidPermissionRequestRequired =
+  parseInt(Platform.Version, 10) < ANDROID_KIT_KAT_SDK_VERSION;
 
 const styles = StyleSheet.create({
   actionSheetContainer: {
@@ -83,26 +86,74 @@ class ShareSheet extends React.Component<Props> {
 }
 
 type Options = {
-  url: string,
+  url?: string,
   urls?: Array<string>,
+  filename?: string,
+  filenames?: Array<string>,
   type?: string,
   message?: string,
   title?: string,
   subject?: string,
+  recipient?: string,
   excludedActivityTypes?: string,
   failOnCancel?: boolean,
   showAppsToView?: boolean,
+  saveToFiles?: boolean,
+  appId: string,
 };
 type MultipleOptions = {
   url?: string,
-  urls: Array<string>,
+  urls?: Array<string>,
+  filename?: string,
+  filenames?: Array<string>,
   type?: string,
   message?: string,
   title?: string,
   subject?: string,
+  activityItemSources?: Array<ActivityItemSource>,
   excludedActivityTypes?: string,
   failOnCancel?: boolean,
   showAppsToView?: boolean,
+  saveToFiles?: boolean,
+};
+
+type ActivityType =
+  | 'addToReadingList'
+  | 'airDrop'
+  | 'assignToContact'
+  | 'copyToPasteBoard'
+  | 'mail'
+  | 'message'
+  | 'openInIBooks' // iOS 9 or later
+  | 'postToFacebook'
+  | 'postToFlickr'
+  | 'postToTencentWeibo'
+  | 'postToTwitter'
+  | 'postToVimeo'
+  | 'postToWeibo'
+  | 'print'
+  | 'saveToCameraRoll'
+  | 'markupAsPDF'; // iOS 11 or later
+
+type ActivityItem = { type: 'text' | 'url', content: string };
+
+type LinkMetadata = {
+  originalUrl?: string,
+  url?: string,
+  title?: string,
+  icon?: string,
+  image?: string,
+  remoteVideoUrl?: string,
+  video?: string,
+};
+
+type ActivityItemSource = {
+  placeholderItem: ActivityItem,
+  item: { [ActivityType | string]: ?ActivityItem },
+  subject?: { [ActivityType | string]: string },
+  dataTypeIdentifier?: { [ActivityType | string]: string },
+  thumbnailImage?: { [ActivityType | string]: string },
+  linkMetadata?: LinkMetadata,
 };
 
 type OpenReturn = { app?: string, dismissedAction?: boolean };
@@ -110,18 +161,18 @@ type ShareSingleReturn = { message: string, isInstalled?: boolean };
 
 const requireAndAskPermissions = async (options: Options | MultipleOptions): Promise<any> => {
   if ((options.url || options.urls) && Platform.OS === 'android') {
-    const urls: Array<string> = options.urls || [options.url];
+    const urls: Array<string> = options.urls || (options.url ? [options.url] : []);
     try {
       const resultArr = await Promise.all(
         urls.map(
-          url =>
+          (url) =>
             new Promise((res, rej) => {
               NativeModules.RNShare.isBase64File(
                 url,
-                e => {
+                (e) => {
                   rej(e);
                 },
-                isBase64 => {
+                (isBase64) => {
                   res(isBase64);
                 },
               );
@@ -139,13 +190,16 @@ const requireAndAskPermissions = async (options: Options | MultipleOptions): Pro
       if (hasPermission) {
         return Promise.resolve(true);
       }
-      const result = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      );
-      if (result === PermissionsAndroid.RESULTS.GRANTED) {
-        return Promise.resolve();
+
+      if (androidPermissionRequestRequired) {
+        const result = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        );
+        if (result === PermissionsAndroid.RESULTS.GRANTED) {
+          return Promise.resolve();
+        }
+        throw new Error('Write Permission not available');
       }
-      throw new Error('Write Permission not available');
     } catch (e) {
       return Promise.reject(e);
     }
@@ -160,15 +214,33 @@ class RNShare {
   static Sheet: any;
   static Social = {
     FACEBOOK: NativeModules.RNShare.FACEBOOK || 'facebook',
+    FACEBOOK_STORIES: NativeModules.RNShare.FACEBOOK_STORIES || 'facebookstories',
     PAGESMANAGER: NativeModules.RNShare.PAGESMANAGER || 'pagesmanager',
     TWITTER: NativeModules.RNShare.TWITTER || 'twitter',
     WHATSAPP: NativeModules.RNShare.WHATSAPP || 'whatsapp',
     INSTAGRAM: NativeModules.RNShare.INSTAGRAM || 'instagram',
-    INSTAGRAM_STORIES: NativeModules.RNShare.INSTAGRAM_STORIES || 'instagramStories',
+    // INSTAGRAM_STORIES: NativeModules.RNShare.INSTAGRAM_STORIES || 'instagramStories',
+    INSTAGRAM_STORIES: NativeModules.RNShare.INSTAGRAM_STORIES || 'instagramstories',
     GOOGLEPLUS: NativeModules.RNShare.GOOGLEPLUS || 'googleplus',
     EMAIL: NativeModules.RNShare.EMAIL || 'email',
     PINTEREST: NativeModules.RNShare.PINTEREST || 'pinterest',
     LINKEDIN: NativeModules.RNShare.LINKEDIN || 'linkedin',
+    SMS: NativeModules.RNShare.SMS || 'sms',
+  };
+
+  static InstagramStories = {
+    SHARE_BACKGROUND_IMAGE: NativeModules.RNShare.SHARE_BACKGROUND_IMAGE || 'shareBackgroundImage',
+    SHARE_BACKGROUND_VIDEO: NativeModules.RNShare.SHARE_BACKGROUND_VIDEO || 'shareBackgroundVideo',
+    SHARE_STICKER_IMAGE: NativeModules.RNShare.SHARE_STICKER_IMAGE || 'shareStickerImage',
+    SHARE_BACKGROUND_AND_STICKER_IMAGE:
+      NativeModules.RNShare.SHARE_BACKGROUND_AND_STICKER_IMAGE || 'shareBackgroundAndStickerImage',
+  };
+
+  static FacebookStories = {
+    SHARE_BACKGROUND_IMAGE: NativeModules.RNShare.SHARE_BACKGROUND_IMAGE || 'shareBackgroundImage',
+    SHARE_STICKER_IMAGE: NativeModules.RNShare.SHARE_STICKER_IMAGE || 'shareStickerImage',
+    SHARE_BACKGROUND_AND_STICKER_IMAGE:
+      NativeModules.RNShare.SHARE_BACKGROUND_AND_STICKER_IMAGE || 'shareBackgroundAndStickerImage',
   };
 
   static InstagramStories = {
@@ -184,51 +256,41 @@ class RNShare {
     return new Promise((resolve, reject) => {
       requireAndAskPermissions(options)
         .then(() => {
-          if (Platform.OS === 'ios' && !options.urls) {
-            // Handle for single file share
-            ActionSheetIOS.showShareActionSheetWithOptions(
-              options,
-              error => {
-                return reject({ error: error });
-              },
-              (success, activityType) => {
-                if (success) {
-                  return resolve({
-                    app: activityType,
-                  });
-                } else if (options.failOnCancel === false) {
-                  return resolve({
-                    dismissedAction: true,
-                  });
-                } else {
-                  reject(new Error('User did not share'));
-                }
-              },
-            );
-          } else {
-            NativeModules.RNShare.open(
-              options,
-              e => {
-                return reject({ error: e });
-              },
-              (success, activityType) => {
-                if (success) {
-                  return resolve({
-                    app: activityType,
-                    message: activityType,
-                  });
-                } else if (options.failOnCancel === false) {
-                  return resolve({
-                    dismissedAction: true,
-                  });
-                } else {
-                  reject(new Error('User did not share'));
-                }
-              },
-            );
+          if (Platform.OS === 'ios' && options.url && !options.urls) {
+            // Backward compatibility with { Share } from react-native
+            const url = options.url;
+            delete options.url;
+
+            options.urls = [url];
+
+            if (options.filename && !options.filenames) {
+              options.filenames = [options.filename];
+              delete options.filename;
+            }
           }
+
+          NativeModules.RNShare.open(
+            options,
+            (e) => {
+              return reject({ error: e });
+            },
+            (success, activityType) => {
+              if (success) {
+                return resolve({
+                  app: activityType,
+                  message: activityType,
+                });
+              } else if (options.failOnCancel === false) {
+                return resolve({
+                  dismissedAction: true,
+                });
+              } else {
+                reject(new Error('User did not share'));
+              }
+            },
+          );
         })
-        .catch(e => reject(e));
+        .catch((e) => reject(e));
     });
   }
 
@@ -239,7 +301,7 @@ class RNShare {
           .then(() => {
             NativeModules.RNShare.shareSingle(
               options,
-              e => {
+              (e) => {
                 return reject({ error: e });
               },
               (e, activityType) => {
@@ -250,7 +312,7 @@ class RNShare {
               },
             );
           })
-          .catch(e => reject(e));
+          .catch((e) => reject(e));
       });
     } else {
       throw new Error('Not implemented');
@@ -262,10 +324,10 @@ class RNShare {
       return new Promise((resolve, reject) => {
         NativeModules.RNShare.isPackageInstalled(
           packageName,
-          e => {
+          (e) => {
             return reject({ error: e });
           },
-          isInstalled => {
+          (isInstalled) => {
             return resolve({
               isInstalled: isInstalled,
               message: 'Package is Installed',
@@ -279,8 +341,5 @@ class RNShare {
   }
 }
 
-module.exports = RNShare;
-module.exports.Overlay = Overlay;
-module.exports.Sheet = Sheet;
-module.exports.Button = Button;
-module.exports.ShareSheet = ShareSheet;
+export { Overlay, Sheet, Button, ShareSheet };
+export default RNShare;

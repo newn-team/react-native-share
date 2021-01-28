@@ -7,14 +7,20 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.content.pm.ResolveInfo;
 import android.content.ComponentName;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -33,6 +39,8 @@ public abstract class ShareIntent {
     protected String chooserTitle = "Share";
     protected ShareFile fileShare;
     protected ReadableMap options;
+    protected ShareFile stickerAsset;
+    protected ShareFile backgroundAsset;
 
     public ShareIntent(ReactApplicationContext reactContext) {
         this.reactContext = reactContext;
@@ -40,11 +48,62 @@ public abstract class ShareIntent {
         this.getIntent().setType("text/plain");
     }
 
+    public Intent excludeChooserIntent(Intent prototype, ReadableMap options) {
+        List<Intent> targetedShareIntents = new ArrayList<Intent>();
+        List<HashMap<String, String>> intentMetaInfo = new ArrayList<HashMap<String, String>>();
+        Intent chooserIntent;
+
+        Intent dummy = new Intent(prototype.getAction());
+        dummy.setType(prototype.getType());
+        List<ResolveInfo> resInfo = this.reactContext.getPackageManager().queryIntentActivities(dummy, 0);
+
+        if (!resInfo.isEmpty()) {
+            for (ResolveInfo resolveInfo : resInfo) {
+                if (resolveInfo.activityInfo == null || options.getArray("excludedActivityTypes").toString().contains(resolveInfo.activityInfo.packageName))
+                    continue;
+
+                HashMap<String, String> info = new HashMap<String, String>();
+                info.put("packageName", resolveInfo.activityInfo.packageName);
+                info.put("className", resolveInfo.activityInfo.name);
+                info.put("simpleName", String.valueOf(resolveInfo.activityInfo.loadLabel(this.reactContext.getPackageManager())));
+                intentMetaInfo.add(info);
+            }
+
+            if (!intentMetaInfo.isEmpty()) {
+                // sorting for nice readability
+                Collections.sort(intentMetaInfo, new Comparator<HashMap<String, String>>() {
+                    @Override
+                    public int compare(HashMap<String, String> map, HashMap<String, String> map2) {
+                        return map.get("simpleName").compareTo(map2.get("simpleName"));
+                    }
+                });
+
+                // create the custom intent list
+                for (HashMap<String, String> metaInfo : intentMetaInfo) {
+                    Intent targetedShareIntent = (Intent) prototype.clone();
+                    targetedShareIntent.setPackage(metaInfo.get("packageName"));
+                    targetedShareIntent.setClassName(metaInfo.get("packageName"), metaInfo.get("className"));
+                    targetedShareIntents.add(targetedShareIntent);
+                }
+
+                chooserIntent = Intent.createChooser(targetedShareIntents.remove(targetedShareIntents.size() - 1), "share");
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetedShareIntents.toArray(new Parcelable[]{}));
+                return chooserIntent;
+            }
+        }
+
+        return Intent.createChooser(prototype, "Share");
+    }
+
     public void open(ReadableMap options) throws ActivityNotFoundException {
         this.options = options;
 
         if (ShareIntent.hasValidKey("subject", options)) {
             this.getIntent().putExtra(Intent.EXTRA_SUBJECT, options.getString("subject"));
+        }
+
+        if (ShareIntent.hasValidKey("email", options)) {
+            this.getIntent().putExtra(Intent.EXTRA_EMAIL, new String[] { options.getString("email") });
         }
 
         if (ShareIntent.hasValidKey("title", options)) {
@@ -55,6 +114,121 @@ public abstract class ShareIntent {
         if (ShareIntent.hasValidKey("message", options)) {
             message = options.getString("message");
         }
+
+        String socialType  = "";
+        if (ShareIntent.hasValidKey("social", options)) {
+            socialType = options.getString("social");
+        }
+
+        if (socialType.equals("sms")) {
+            String recipient = options.getString("recipient");
+
+            if (!recipient.isEmpty()) {
+                this.getIntent().putExtra("address", recipient);
+            }
+        }
+
+        if (socialType.equals("whatsapp")) {
+            if (options.hasKey("whatsAppNumber")) {
+                String whatsAppNumber = options.getString("whatsAppNumber");
+                String chatAddress = whatsAppNumber + "@s.whatsapp.net";
+                this.getIntent().putExtra("jid", chatAddress);
+            }
+        }
+
+        if (socialType.equals("instagramstories")) {
+            if (ShareIntent.hasValidKey("method", options)) {
+                String method = options.getString("method");
+                switch (method) {
+                    case "shareBackgroundVideo": {
+                        if (ShareIntent.hasValidKey("backgroundVideo", options)) {
+                            this.backgroundAsset = new ShareFile(options.getString("backgroundVideo"), "background", this.reactContext);
+                            this.getIntent().setDataAndType(backgroundAsset.getURI(), backgroundAsset.getType());
+                            this.getIntent().addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                            if (ShareIntent.hasValidKey("attributionURL", options)) {
+                                this.getIntent().putExtra("content_url", options.getString("attributionURL"));
+                            }
+                        } else {
+                            throw new java.lang.IllegalArgumentException("backgroundVideo is empty");
+                        }
+                        break;
+                    }
+                    case "shareBackgroundImage": {
+                        if (ShareIntent.hasValidKey("backgroundImage", options)) {
+                            this.backgroundAsset = new ShareFile(options.getString("backgroundImage"), "background", this.reactContext);
+                            this.getIntent().setDataAndType(backgroundAsset.getURI(), backgroundAsset.getType());
+                            this.getIntent().addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                            if (ShareIntent.hasValidKey("attributionURL", options)) {
+                                this.getIntent().putExtra("content_url", options.getString("attributionURL"));
+                            }
+                        } else {
+                            throw new java.lang.IllegalArgumentException("backgroundImage is empty");
+                        }
+                        break;
+                    }
+                    case "shareStickerImage": {
+                        if (ShareIntent.hasValidKey("stickerImage", options)) {
+                            this.getIntent().setType("image/jpeg");
+                            this.stickerAsset = new ShareFile(options.getString("stickerImage"), "sticker", this.reactContext);
+                            this.getIntent().putExtra("interactive_asset_uri", stickerAsset.getURI());
+                            Activity activity = this.reactContext.getCurrentActivity();
+                            if (activity == null) {
+                                TargetChosenReceiver.sendCallback(false, "Something went wrong");
+                                return;
+                            }
+                            activity.grantUriPermission(
+                                    "com.instagram.android", stickerAsset.getURI(), Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            );
+
+                            if (ShareIntent.hasValidKey("attributionURL", options)) {
+                                this.getIntent().putExtra("content_url", options.getString("attributionURL"));
+                            }
+
+                            if (ShareIntent.hasValidKey("backgroundTopColor", options)) {
+                                this.getIntent().putExtra("top_background_color", options.getString("backgroundTopColor"));
+                            }
+
+                            if (ShareIntent.hasValidKey("backgroundBottomColor", options)) {
+                                this.getIntent().putExtra("bottom_background_color", options.getString("backgroundBottomColor"));
+                            }
+                        } else {
+                            throw new java.lang.IllegalArgumentException("stickerImage is empty");
+                        }
+                        break;
+                    }
+                    case "shareBackgroundAndStickerImage": {
+                        if (ShareIntent.hasValidKey("backgroundImage", options) && ShareIntent.hasValidKey("stickerImage", options)) {
+                            this.backgroundAsset = new ShareFile(options.getString("backgroundImage"), "image/jpeg", "background", this.reactContext);
+                            this.stickerAsset = new ShareFile(options.getString("stickerImage"), "image/jpeg", "sticker", this.reactContext);
+
+                            this.getIntent().setDataAndType(backgroundAsset.getURI(), backgroundAsset.getType());
+                            this.getIntent().addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            this.getIntent().putExtra("interactive_asset_uri", stickerAsset.getURI());
+                            Activity activity = this.reactContext.getCurrentActivity();
+                            if (activity == null) {
+                                TargetChosenReceiver.sendCallback(false, "Something went wrong");
+                                return;
+                            }
+                            activity.grantUriPermission(
+                                    "com.instagram.android", stickerAsset.getURI(), Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            );
+
+                            if (ShareIntent.hasValidKey("attributionURL", options)) {
+                                this.getIntent().putExtra("content_url", options.getString("attributionURL"));
+                            }
+                        } else {
+                            throw new java.lang.IllegalArgumentException("backgroundImage or stickerImage is empty");
+                        }
+                        break;
+                    }
+                    default:
+                        throw new java.lang.IllegalStateException("Unknown Instagram stories sharing mode: " + method);
+                }
+            }
+        }
+
         if (ShareIntent.hasValidKey("urls", options)) {
 
             ShareFiles fileShare = getFileShares(options);
@@ -70,8 +244,10 @@ public abstract class ShareIntent {
             } else {
                 if (!TextUtils.isEmpty(message) && !isShareWithoutMessage(this)) {
                     this.getIntent().putExtra(Intent.EXTRA_TEXT, message + " " + options.getArray("urls").toString());
+                } else if (!TextUtils.isEmpty(message)) {
+                    this.getIntent().putExtra(Intent.EXTRA_TEXT, message + " " + options.getArray("urls").getString(0));
                 } else {
-                    this.getIntent().putExtra(Intent.EXTRA_TEXT, options.getArray("urls").toString());
+                    this.getIntent().putExtra(Intent.EXTRA_TEXT, options.getArray("urls").getString(0));
                 }
             }
         } else if (ShareIntent.hasValidKey("url", options)) {
@@ -97,18 +273,30 @@ public abstract class ShareIntent {
     }
 
     protected ShareFile getFileShare(ReadableMap options) {
+         String filename = null;
+        if (ShareIntent.hasValidKey("filename", options)) {
+            filename = options.getString("filename");
+        }
         if (ShareIntent.hasValidKey("type", options)) {
-            return new ShareFile(options.getString("url"), options.getString("type"), this.reactContext);
+            return new ShareFile(options.getString("url"), options.getString("type"), filename, this.reactContext);
         } else {
-            return new ShareFile(options.getString("url"), this.reactContext);
+            return new ShareFile(options.getString("url"), filename, this.reactContext);
         }
     }
 
     protected ShareFiles getFileShares(ReadableMap options) {
+        ArrayList<String> filenames = new ArrayList<>();
+        if (ShareIntent.hasValidKey("filenames", options)) {
+            ReadableArray fileNamesReadableArray = options.getArray("filenames");
+            for (int i = 0; i < fileNamesReadableArray.size(); i++) {
+                filenames.add(fileNamesReadableArray.getString(i));
+            }
+        }
+
         if (ShareIntent.hasValidKey("type", options)) {
-            return new ShareFiles(options.getArray("urls"), options.getString("type"), this.reactContext);
+            return new ShareFiles(options.getArray("urls"), filenames, options.getString("type"), this.reactContext);
         } else {
-            return new ShareFiles(options.getArray("urls"), this.reactContext);
+            return new ShareFiles(options.getArray("urls"), filenames, this.reactContext);
         }
     }
 
@@ -165,7 +353,17 @@ public abstract class ShareIntent {
             chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, viewIntents);
         }
 
-        activity.startActivityForResult(chooser, RNShareModule.SHARE_REQUEST_CODE);
+        if (ShareIntent.hasValidKey("excludedActivityTypes", options)) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                chooser.putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, getExcludedComponentArray(options.getArray("excludedActivityTypes")));
+                activity.startActivityForResult(chooser, RNShareModule.SHARE_REQUEST_CODE);
+            } else {
+                activity.startActivityForResult(excludeChooserIntent(this.getIntent(),options), RNShareModule.SHARE_REQUEST_CODE);
+            }
+        } else {
+            activity.startActivityForResult(chooser, RNShareModule.SHARE_REQUEST_CODE);
+        }
+
         if (intentSender == null) {
             TargetChosenReceiver.sendCallback(true, true, "OK");
         }
@@ -195,6 +393,10 @@ public abstract class ShareIntent {
 
     protected abstract String getPackage();
 
+    protected String getComponentClass() {
+        return null;
+    }
+
     protected abstract String getDefaultWebLink();
 
     protected abstract String getPlayStoreLink();
@@ -207,5 +409,24 @@ public abstract class ShareIntent {
         }
 
         return false;
+    }
+
+    private ComponentName[] getExcludedComponentArray(ReadableArray excludeActivityTypes){
+        if (excludeActivityTypes == null){
+            return null;
+        }
+        Intent dummy = new Intent(getIntent().getAction());
+        dummy.setType(getIntent().getType());
+        List<ComponentName> componentNameList = new ArrayList<>();
+        List<ResolveInfo> resInfoList = this.reactContext.getPackageManager().queryIntentActivities(dummy, 0);
+        for (int index = 0; index < excludeActivityTypes.size(); index++) {
+            String packageName = excludeActivityTypes.getString(index);
+            for(ResolveInfo resInfo : resInfoList) {
+                if(resInfo.activityInfo.packageName.equals(packageName)) {
+                    componentNameList.add(new ComponentName(resInfo.activityInfo.packageName, resInfo.activityInfo.name));
+                }
+            }
+        }
+        return componentNameList.toArray(new ComponentName[]{});
     }
 }

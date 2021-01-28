@@ -20,20 +20,33 @@
     NSString *urlString = [NSString stringWithFormat:@"instagram://library?AssetPath=%@", options[@"url"]];
     NSURL * shareURL = [NSURL URLWithString:urlString];
 
+    NSLog(@"Video duration: %f seconds for file %@", videoDurationSeconds, videoAsset.URL.absoluteString);
+
+    NSURL * shareURL;
+    // Instagram doesn't allow sharing videos longer than 60 seconds on iOS anymore. (next button is not responding, trim is unavailable)
+    if (videoDurationSeconds <= 60.0f) {
+        NSString *phIdentifier= [options[@"url"] stringByReplacingOccurrencesOfString:@"ph://" withString:@""];
+        NSString * urlString = [NSString stringWithFormat:@"instagram://library?LocalIdentifier=%@", phIdentifier];
+        shareURL = [NSURL URLWithString:urlString];
+    } else {
+        shareURL = [NSURL URLWithString:@"instagram://camera"];
+    }
+
     if ([[UIApplication sharedApplication] canOpenURL: shareURL]) {
         [[UIApplication sharedApplication] openURL: shareURL];
         successCallback(@[]);
     } else {
         // Cannot open instagram
-        NSString *stringURL = @"http://itunes.apple.com/app/instagram/id389801252";
+        NSString *stringURL = @"https://itunes.apple.com/app/instagram/id389801252";
         NSURL *url = [NSURL URLWithString:stringURL];
-        [[UIApplication sharedApplication] openURL:url];
+        
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {}];
         
         NSString *errorMessage = @"Not installed";
         NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey: NSLocalizedString(errorMessage, nil)};
         NSError *error = [NSError errorWithDomain:@"com.rnshare" code:1 userInfo:userInfo];
         
-        NSLog(errorMessage);
+        NSLog(@"%@", errorMessage);
         failureCallback(error);
     } 
 }
@@ -85,7 +98,9 @@
             NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?LocalIdentifier=\%@", [placeholder localIdentifier]]];
             
             if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-                [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:NULL];
+                if (@available(iOS 10.0, *)) {
+                    [[UIApplication sharedApplication] openURL:instagramURL options:@{} completionHandler:NULL];
+                }
                 if (successCallback != NULL) {
                     successCallback(@[]);
                 }

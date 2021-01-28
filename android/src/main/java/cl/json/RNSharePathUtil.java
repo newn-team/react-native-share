@@ -57,7 +57,7 @@ public class RNSharePathUtil {
                     break;
                 }
             } catch (Exception e) {
-
+                System.out.println("RNSharePathUtil::compatUriFromFile ERROR " + e.getMessage());
             }
         }
         return result;
@@ -76,7 +76,7 @@ public class RNSharePathUtil {
                 final String type = split[0];
 
                 if ("primary".equalsIgnoreCase(type) || "0".equalsIgnoreCase(type)) {
-                    return filePrefix + Environment.getExternalStorageDirectory() + "/" + split[1];
+                    return filePrefix + context.getExternalCacheDir() + "/" + split[1];
                 } else if ("raw".equalsIgnoreCase(type)) {
                     return filePrefix + split[1];
                 } else if (!TextUtils.isEmpty(type)) {

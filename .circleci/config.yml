@@ -1,36 +1,126 @@
-version: 2
-executorType: docker
-jobs:
-  build:
-    resource_class: large
-    working_directory: ~/app
-    docker:
-      - image: circleci/android:api-28-node
+version: 2.1
+
+orbs:
+  react-native: react-native-community/react-native@4.4.2
+
+commands:
+  checkout-attach-workspace:
+    description: "Checkout and attach workspace"
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - v1-yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}-{{ checksum "example/yarn.lock" }}
-            - v1-yarn-cache
-      - run:
-          name: Install Dependencies
-          command: yarn install --frozen-lockfile --non-interactive --cache-folder ~/.cache/yarn
-      - run:
-          name: Validate
-          command: yarn validate
-      - run:
-          name: Run Checks
-          command: |
-            cd android
-            chmod +x ./gradlew
-            ./gradlew clean && ./gradlew && ./gradlew check
-      - run:
-          name: Install dependencies of the example app
-          command: cd example && yarn install --frozen-lockfile --non-interactive --cache-folder ~/.cache/yarn
-      - run:
-          name: Check for errors in the example app using Flow
-          command: cd example && yarn flow
-      - save_cache:
-          key: v1-yarn-cache-{{ .Branch }}-{{ checksum "yarn.lock" }}-{{ checksum "example/yarn.lock" }}
+      - attach_workspace:
+          at: ~/app
+
+jobs:
+  install-dependencies:
+    executor: react-native/linux_js
+    working_directory: ~/app
+    steps:
+      - checkout
+      - react-native/yarn_install
+      - persist_to_workspace:
+          root: ~/app
           paths:
-            - ~/.cache/yarn
+            - node_modules
+
+  lint:
+    executor: react-native/linux_js
+    working_directory: ~/app
+    steps:
+      - checkout-attach-workspace
+      - run:
+          name: Lint
+          command: yarn lint
+
+  validate-flow:
+    executor: react-native/linux_js
+    working_directory: ~/app
+    steps:
+      - checkout-attach-workspace
+      - run:
+          name: Flow
+          command: yarn validate:flow
+
+  ios_build:
+    macos:
+      xcode: 11.5.0
+    working_directory: ~/app
+    steps:
+      - checkout
+      - react-native/setup_macos_executor
+      - run: yarn install --frozen-lockfile --non-interactive
+      - react-native/pod_install:
+          pod_install_directory: ./example/ios
+      - react-native/ios_build:
+          project_path: ./example/ios/Example.xcworkspace
+          project_type: workspace
+          scheme: example
+          device: iPhone 11
+
+  publish-version:
+    executor: react-native/linux_js
+    working_directory: ~/app
+    steps:
+      - checkout-attach-workspace
+      - run:
+          name: Publish New Version
+          command: yarn ci:publish
+
+  deploy-docs:
+    executor: react-native/linux_js
+    working_directory: ~/app
+    steps:
+      - checkout-attach-workspace
+      - run:
+          name: Deploying new docs-version
+          command: |
+            git config --global user.email "${GH_EMAIL}@users.noreply.github.com"
+            git config --global user.name "${GH_NAME}"
+            echo "machine github.com login $GH_NAME password $GH_TOKEN" > ~/.netrc
+            cd website && yarn install && CUSTOM_COMMIT_MESSAGE="[skip ci]" GIT_USER=${GH_NAME} yarn deploy
+
+workflows:
+  version: 2
+
+  build-lint-app:
+    jobs:
+      - install-dependencies:
+          filters:
+            branches:
+              ignore:
+                - master
+      - react-native/android_build:
+          checkout: true
+          project_path: ./example/android
+          workspace_root: ~/app
+          filters:
+            branches:
+              ignore:
+                - master
+      - ios_build:
+          filters:
+            branches:
+              ignore:
+                - master
+      - lint:
+          requires:
+            - install-dependencies
+      - validate-flow:
+          requires:
+            - install-dependencies
+
+  release:
+    jobs:
+      - install-dependencies:
+          filters:
+            branches:
+              only:
+                - master
+      - publish-version:
+          requires:
+            - install-dependencies
+      - deploy-docs:
+          filters:
+            branches:
+              only:
+                - master

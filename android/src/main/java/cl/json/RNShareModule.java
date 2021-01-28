@@ -19,6 +19,7 @@ import java.util.Map;
 
 import cl.json.social.EmailShare;
 import cl.json.social.FacebookShare;
+import cl.json.social.FacebookStoriesShare;
 import cl.json.social.FacebookPagesManagerShare;
 import cl.json.social.GenericShare;
 import cl.json.social.GooglePlusShare;
@@ -59,12 +60,14 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
 
     private enum SHARES {
         facebook,
+        facebookstories,
         generic,
         pagesmanager,
         twitter,
         whatsapp,
         instagram,
-        instagramStories,
+//         instagramStories,
+        instagramstories,
         googleplus,
         line,
         email,
@@ -82,6 +85,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     return new GenericShare(reactContext);
                 case facebook:
                     return new FacebookShare(reactContext);
+                case facebookstories:
+                    return new FacebookStoriesShare(reactContext);
                 case pagesmanager:
                     return new FacebookPagesManagerShare(reactContext);
                 case twitter:
@@ -90,7 +95,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     return new WhatsAppShare(reactContext);
                 case instagram:
                     return new InstagramShare(reactContext);
-                case instagramStories:
+//                 case instagramStories:
+                case instagramstories:
                     return new InstagramStoriesShare(reactContext);
                 case googleplus:
                     return new GooglePlusShare(reactContext);
@@ -142,12 +148,12 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
             GenericShare share = new GenericShare(this.reactContext);
             share.open(options);
         } catch (ActivityNotFoundException ex) {
-            System.out.println("ERROR");
-            System.out.println(ex.getMessage());
+            System.out.println("ERROR " + ex.getMessage());
+            ex.printStackTrace(System.out);
             TargetChosenReceiver.sendCallback(false, "not_available");
         } catch (Exception e) {
-            System.out.println("ERROR");
-            System.out.println(e.getMessage());
+            System.out.println("ERROR " + e.getMessage());
+            e.printStackTrace(System.out);
             TargetChosenReceiver.sendCallback(false, e.getMessage());
         }
     }
@@ -165,12 +171,12 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                     throw new ActivityNotFoundException("Invalid share activity");
                 }
             } catch (ActivityNotFoundException ex) {
-                System.out.println("ERROR");
-                System.out.println(ex.getMessage());
+                System.out.println("ERROR " + ex.getMessage());
+                ex.printStackTrace(System.out);
                 TargetChosenReceiver.sendCallback(false, ex.getMessage());
             } catch (Exception e) {
-                System.out.println("ERROR");
-                System.out.println(e.getMessage());
+                System.out.println("ERROR " + e.getMessage());
+                e.printStackTrace(System.out);
                 TargetChosenReceiver.sendCallback(false, e.getMessage());
             }
         } else {
@@ -200,8 +206,8 @@ public class RNShareModule extends ReactContextBaseJavaModule implements Activit
                 successCallback.invoke(false);
             }
         } catch (Exception e) {
-            System.out.println("ERROR");
-            System.out.println(e.getMessage());
+            System.out.println("ERROR " + e.getMessage());
+            e.printStackTrace(System.out);
             failureCallback.invoke(e.getMessage());
         }
     }

@@ -7,16 +7,25 @@ import android.support.v4.content.FileProvider;
 import android.net.Uri;
 
 import java.io.File;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import java.io.File;
+import android.os.Environment;
+import android.net.Uri;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 
 import cl.json.ShareFile;
 
+/**
+ * Created by Vladimir Stalmakov on 01-06-20.
+ */
 public class InstagramStoriesShare extends SingleShareIntent {
 
     private static final String PACKAGE = "com.instagram.android";
-    private static final String PLAY_STORE_LINK = "market://details?id=com.instagram.android";
+//     private static final String PLAY_STORE_LINK = "market://details?id=com.instagram.android";
+    private static final String PLAY_STORE_LINK = "https://play.google.com/store/apps/details?id=com.instagram.android";
 
     public InstagramStoriesShare(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -65,6 +74,9 @@ public class InstagramStoriesShare extends SingleShareIntent {
             activity.startActivityForResult(this.getIntent(), 0);
             TargetChosenReceiver.sendCallback(true, true, this.getIntent().getPackage());
         }
+
+        //  extra params here
+        this.openIntentChooser(options);
     }
 
     @Override

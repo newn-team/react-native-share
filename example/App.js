@@ -7,7 +7,6 @@
  */
 
 import React, {useState} from 'react';
-
 import {
   Alert,
   Button,
@@ -18,15 +17,14 @@ import {
   View,
 } from 'react-native';
 
-// eslint-disable-next-line import/default
 import Share from 'react-native-share';
 
 import images from './images/imagesBase64';
+import pdfBase64 from './images/pdfBase64';
 
 const App = () => {
-  // eslint-disable-next-line no-undef
   const [packageSearch, setPackageSearch] = useState<string>('');
-  // eslint-disable-next-line no-undef
+  const [recipient, setRecipient] = useState<string>('');
   const [result, setResult] = useState<string>('');
 
   /**
@@ -84,6 +82,7 @@ const App = () => {
   const shareEmailImage = async () => {
     const shareOptions = {
       title: 'Share file',
+      email: 'email@example.com',
       social: Share.Social.EMAIL,
       failOnCancel: false,
       urls: [images.image1, images.image2],
@@ -118,6 +117,78 @@ const App = () => {
     }
   };
 
+  /**
+   * This function shares PDF and PNG files to
+   * the Files app that you send as the urls param
+   */
+  const shareToFiles = async () => {
+    const shareOptions = {
+      title: 'Share file',
+      failOnCancel: false,
+      saveToFiles: true,
+      urls: [images.image1, images.pdf1], // base64 with mimeType or path to local file
+    };
+
+    // If you want, you can use a try catch, to parse
+    // the share response. If the user cancels, etc.
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
+  const shareToInstagramStory = async () => {
+    const shareOptions = {
+      title: 'Share image to instastory',
+      method: Share.InstagramStories.SHARE_BACKGROUND_IMAGE,
+      backgroundImage: images.image1,
+      social: Share.Social.INSTAGRAM_STORIES,
+    };
+
+    try {
+      const ShareResponse = await Share.shareSingle(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
+  const shareSms = async () => {
+    const shareOptions = {
+      title: '',
+      social: Share.Social.SMS,
+      recipient,
+      message: 'Example SMS',
+    };
+
+    try {
+      const ShareResponse = await Share.shareSingle(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('Error =>', error);
+      setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
+  const sharePdfBase64 = async () => {
+    const shareOptions = {
+      title: '',
+      url: pdfBase64,
+    };
+
+    try {
+      const ShareResponse = await Share.open(shareOptions);
+      setResult(JSON.stringify(ShareResponse, null, 2));
+    } catch (error) {
+      console.log('sharePdfBase64 Error =>', error);
+      setResult('error: '.concat(getErrorString(error)));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome to React Native Share Example!</Text>
@@ -131,23 +202,48 @@ const App = () => {
         <View style={styles.button}>
           <Button onPress={shareEmailImage} title="Share Social: Email" />
         </View>
-        {Platform.OS === 'android' && (
-          <View style={styles.searchPackageContainer}>
-            <TextInput
-              placeholder="Search for a Package"
-              onChangeText={setPackageSearch}
-              value={packageSearch}
-              style={styles.textInput}
-            />
-            <View>
-              <Button
-                onPress={checkIfPackageIsInstalled}
-                title="Check Package"
-              />
-            </View>
+        <View style={styles.button}>
+          <Button onPress={shareToInstagramStory} title="Share to IG Story" />
+        </View>
+        {Platform.OS === 'ios' && (
+          <View style={styles.button}>
+            <Button onPress={shareToFiles} title="Share To Files" />
           </View>
         )}
-        <Text style={{marginTop: 20, fontSize: 20}}>Result</Text>
+        {Platform.OS === 'android' && (
+          <>
+            <View style={styles.button}>
+              <Button onPress={sharePdfBase64} title="Share Base64'd PDF url" />
+            </View>
+            <View style={styles.withInputContainer}>
+              <TextInput
+                placeholder="Recipient"
+                onChangeText={setRecipient}
+                value={recipient}
+                style={styles.textInput}
+                keyboardType="number-pad"
+              />
+              <View>
+                <Button onPress={shareSms} title="Share Social: SMS" />
+              </View>
+            </View>
+            <View style={styles.withInputContainer}>
+              <TextInput
+                placeholder="Search for a Package"
+                onChangeText={setPackageSearch}
+                value={packageSearch}
+                style={styles.textInput}
+              />
+              <View>
+                <Button
+                  onPress={checkIfPackageIsInstalled}
+                  title="Check Package"
+                />
+              </View>
+            </View>
+          </>
+        )}
+        <Text style={styles.resultTitle}>Result</Text>
         <Text style={styles.result}>{result}</Text>
       </View>
     </View>
@@ -174,6 +270,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
+  resultTitle: {
+    marginTop: 20,
+    fontSize: 20,
+  },
   result: {
     fontSize: 14,
     margin: 10,
@@ -181,7 +281,7 @@ const styles = StyleSheet.create({
   optionsRow: {
     justifyContent: 'space-between',
   },
-  searchPackageContainer: {
+  withInputContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
