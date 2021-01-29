@@ -82,11 +82,6 @@
     "validate:prettier": "prettier --write *.js components/*.js",
     "ci:publish": "npx semantic-release"
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
-    }
-  },
   "release": {
     "branches": [
       "master"

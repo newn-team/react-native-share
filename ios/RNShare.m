@@ -44,17 +44,12 @@
 #import "WhatsAppShare.h"
 #import "InstagramShare.h"
 #import "InstagramStories.h"
-<<<<<<< HEAD
-#import "GooglePlusShare.h"
-#import "EmailShare.h"
 #import "LINEShare.h"
-=======
 #import "FacebookStories.h"
 #import "GooglePlusShare.h"
 #import "EmailShare.h"
 #import "RNShareActivityItemSource.h"
 #import "Utils.h"
->>>>>>> upstream/master
 
 @implementation RNShare
 

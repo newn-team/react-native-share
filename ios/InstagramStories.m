@@ -83,9 +83,6 @@ backgroundBottomColor:(NSString *)backgroundBottomColor
 }
 
 - (void)backgroundVideo:(NSData *)backgroundVideo stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL
-// =======
-// - (void)backgroundVideo:(NSData *)backgroundVideo
-// >>>>>>> upstream/master
 {
     // Verify app can open custom URL scheme. If able,
     // assign assets to pasteboard, open scheme.

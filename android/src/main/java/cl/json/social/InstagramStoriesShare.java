@@ -3,12 +3,8 @@ package cl.json.social;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.v4.content.FileProvider;
 import android.net.Uri;
 
-import java.io.File;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import java.io.File;
 import android.os.Environment;
 import android.net.Uri;
