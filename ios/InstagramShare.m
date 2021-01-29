@@ -17,7 +17,6 @@
     
     NSLog(@"Try open view");
 
-    NSURL * shareURL;
     NSString *urlString = [NSString stringWithFormat:@"instagram://library?AssetPath=%@", options[@"url"]];
     NSURL * shareURL = [NSURL URLWithString:urlString];
 
