@@ -110,7 +110,6 @@ RCT_EXPORT_MODULE()
     @"GOOGLEPLUS": @"googleplus",
     @"WHATSAPP": @"whatsapp",
     @"INSTAGRAM": @"instagram",
-//     @"INSTAGRAM_STORIES": @"instagramStories",
     @"EMAIL": @"email",
     @"LINE": @"line",
     @"INSTAGRAM_STORIES": @"instagramstories",
@@ -165,10 +164,6 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
             } else {
                 [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
             }
-// <<<<<<< HEAD
-//         } else if([social isEqualToString:@"instagramStories"]) {
-//             NSLog(@"TRY OPEN instagramStories");
-// =======
         } else if([social isEqualToString:@"instagramstories"]) {
             NSLog(@"TRY OPEN instagram-stories");
             InstagramStories *shareCtl = [[InstagramStories alloc] init];
