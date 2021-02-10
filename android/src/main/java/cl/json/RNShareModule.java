@@ -30,6 +30,7 @@ import cl.json.social.TwitterShare;
 import cl.json.social.WhatsAppShare;
 import cl.json.social.InstagramShare;
 import cl.json.social.InstagramStoriesShare;
+import cl.json.social.InstagramStoriesVideoAndStickerImageShare;
 import cl.json.social.PinterestShare;
 import cl.json.social.SnapChatShare;
 import cl.json.social.SMSShare;
