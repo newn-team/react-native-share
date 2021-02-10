@@ -220,6 +220,7 @@ class RNShare {
     WHATSAPP: NativeModules.RNShare.WHATSAPP || 'whatsapp',
     INSTAGRAM: NativeModules.RNShare.INSTAGRAM || 'instagram',
     INSTAGRAM_STORIES: NativeModules.RNShare.INSTAGRAM_STORIES || 'instagramstories',
+    INSTAGRAM_STORIES_SFM: NativeModules.RNShare.INSTAGRAM_STORIES_SFM || 'instagramStories',
     GOOGLEPLUS: NativeModules.RNShare.GOOGLEPLUS || 'googleplus',
     EMAIL: NativeModules.RNShare.EMAIL || 'email',
     PINTEREST: NativeModules.RNShare.PINTEREST || 'pinterest',
@@ -233,6 +234,8 @@ class RNShare {
     SHARE_STICKER_IMAGE: NativeModules.RNShare.SHARE_STICKER_IMAGE || 'shareStickerImage',
     SHARE_BACKGROUND_AND_STICKER_IMAGE:
       NativeModules.RNShare.SHARE_BACKGROUND_AND_STICKER_IMAGE || 'shareBackgroundAndStickerImage',
+    SHARE_BACKGROUND_VIDEO_AND_STICKER_IMAGE:
+      NativeModules.RNShare.SHARE_BACKGROUND_VIDEO_AND_STICKER_IMAGE || 'shareBackgroundVideoAndStickerImage',
   };
 
   static FacebookStories = {
@@ -240,8 +243,6 @@ class RNShare {
     SHARE_STICKER_IMAGE: NativeModules.RNShare.SHARE_STICKER_IMAGE || 'shareStickerImage',
     SHARE_BACKGROUND_AND_STICKER_IMAGE:
       NativeModules.RNShare.SHARE_BACKGROUND_AND_STICKER_IMAGE || 'shareBackgroundAndStickerImage',
-    SHARE_BACKGROUND_VIDEO_AND_STICKER_IMAGE:
-      NativeModules.RNShare.SHARE_BACKGROUND_VIDEO_AND_STICKER_IMAGE || 'shareBackgroundVideoAndStickerImage',
   };
 
   static open(options: Options | MultipleOptions): Promise<OpenReturn> {

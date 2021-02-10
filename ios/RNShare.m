@@ -111,6 +111,7 @@ RCT_EXPORT_MODULE()
     @"WHATSAPP": @"whatsapp",
     @"INSTAGRAM": @"instagram",
     @"INSTAGRAM_STORIES": @"instagramstories",
+    @"INSTAGRAM_STORIES_SFM": @"instagramStories",
     @"EMAIL": @"email",
     @"LINE": @"line",
     @"SHARE_BACKGROUND_IMAGE": @"shareBackgroundImage",
@@ -163,6 +164,10 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
                 [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
             }
         } else if([social isEqualToString:@"instagramstories"]) {
+            NSLog(@"TRY OPEN instagram-stories");
+            InstagramStories *shareCtl = [[InstagramStories alloc] init];
+            [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
+        } else if([social isEqualToString:@"instagramStories"]) {
             NSLog(@"TRY OPEN instagram-stories");
             InstagramStories *shareCtl = [[InstagramStories alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
