@@ -7,14 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4DA787302172E92200DECA05 /* LINEShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7872F2172E92200DECA05 /* LINEShare.m */; };
 		4EED9CAF24F5A2EB006505C4 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EED9CAE24F5A2EB006505C4 /* Utils.m */; };
 		6D697F8423A86EBC00F754A1 /* RNShareActivityItemSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D697F8323A86EBC00F754A1 /* RNShareActivityItemSource.m */; };
-		4DA787302172E92200DECA05 /* LINEShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DA7872F2172E92200DECA05 /* LINEShare.m */; };
 		B33C22851D441713006BCD98 /* GenericShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B33C22841D441713006BCD98 /* GenericShare.m */; };
 		B33C22891D4419E8006BCD98 /* WhatsAppShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B33C22881D4419E8006BCD98 /* WhatsAppShare.m */; };
 		B33C228B1D442577006BCD98 /* EmailShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B33C228A1D442576006BCD98 /* EmailShare.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNShare.m */; };
 		B3EEE48E1D4844E7008422B6 /* GooglePlusShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EEE48D1D4844E7008422B6 /* GooglePlusShare.m */; };
+		B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */; };
 		CE0C76371E9E7DE100ED396E /* InstagramShare.m in Sources */ = {isa = PBXBuildFile; fileRef = CE0C76361E9E7DE100ED396E /* InstagramShare.m */; };
 		F1A1AD582444B09B00E32E33 /* FacebookStories.m in Sources */ = {isa = PBXBuildFile; fileRef = F1A1AD572444B09B00E32E33 /* FacebookStories.m */; };
 		FCC7BB4F221457EF00E1EA39 /* InstagramStories.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC7BB4E221457EF00E1EA39 /* InstagramStories.m */; };
@@ -34,12 +35,12 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNShare.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNShare.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DA7872E2172E92200DECA05 /* LINEShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LINEShare.h; sourceTree = "<group>"; };
+		4DA7872F2172E92200DECA05 /* LINEShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LINEShare.m; sourceTree = "<group>"; };
 		4EED9CAD24F5A2EB006505C4 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		4EED9CAE24F5A2EB006505C4 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
 		6D697F8223A86EBC00F754A1 /* RNShareActivityItemSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNShareActivityItemSource.h; sourceTree = "<group>"; };
 		6D697F8323A86EBC00F754A1 /* RNShareActivityItemSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNShareActivityItemSource.m; sourceTree = "<group>"; };
-		4DA7872E2172E92200DECA05 /* LINEShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LINEShare.h; sourceTree = "<group>"; };
-		4DA7872F2172E92200DECA05 /* LINEShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LINEShare.m; sourceTree = "<group>"; };
 		B33C22841D441713006BCD98 /* GenericShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericShare.m; sourceTree = "<group>"; };
 		B33C22861D441723006BCD98 /* GenericShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericShare.h; sourceTree = "<group>"; };
 		B33C22871D4419DA006BCD98 /* WhatsAppShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WhatsAppShare.h; sourceTree = "<group>"; };
@@ -50,6 +51,8 @@
 		B3E7B5891CC2AC0600A0062D /* RNShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNShare.m; sourceTree = "<group>"; };
 		B3EEE48D1D4844E7008422B6 /* GooglePlusShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlusShare.m; sourceTree = "<group>"; };
 		B3EEE48F1D4844F4008422B6 /* GooglePlusShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GooglePlusShare.h; sourceTree = "<group>"; };
+		B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InstagramStoriesVideoAndStickerImageShare.m; sourceTree = "<group>"; };
+		B76F297E25D60FE200BB7E89 /* InstagramStoriesVideoAndStickerImageShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstagramStoriesVideoAndStickerImageShare.h; sourceTree = "<group>"; };
 		CE0C76361E9E7DE100ED396E /* InstagramShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InstagramShare.m; sourceTree = "<group>"; };
 		CE0C76621E9E869300ED396E /* InstagramShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstagramShare.h; sourceTree = "<group>"; };
 		F1A1AD562444B09B00E32E33 /* FacebookStories.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FacebookStories.h; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 				FCC7BB4E221457EF00E1EA39 /* InstagramStories.m */,
 				F1A1AD562444B09B00E32E33 /* FacebookStories.h */,
 				F1A1AD572444B09B00E32E33 /* FacebookStories.m */,
+				B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */,
+				B76F297E25D60FE200BB7E89 /* InstagramStoriesVideoAndStickerImageShare.h */,
 			);
 			name = social;
 			sourceTree = "<group>";
@@ -174,6 +179,7 @@
 				F1A1AD582444B09B00E32E33 /* FacebookStories.m in Sources */,
 				6D697F8423A86EBC00F754A1 /* RNShareActivityItemSource.m in Sources */,
 				CE0C76371E9E7DE100ED396E /* InstagramShare.m in Sources */,
+				B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */,
 				4EED9CAF24F5A2EB006505C4 /* Utils.m in Sources */,
 				B3EEE48E1D4844E7008422B6 /* GooglePlusShare.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNShare.m in Sources */,

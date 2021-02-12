@@ -50,6 +50,7 @@
 #import "LINEShare.h"
 #import "RNShareActivityItemSource.h"
 #import "Utils.h"
+#import "InstagramStoriesVideoAndStickerImageShare.h"
 
 @implementation RNShare
 
@@ -169,7 +170,7 @@ RCT_EXPORT_METHOD(shareSingle:(NSDictionary *)options
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         } else if([social isEqualToString:@"instagramStories"]) {
             NSLog(@"TRY OPEN instagram-stories");
-            InstagramStories *shareCtl = [[InstagramStories alloc] init];
+            InstagramStoriesVideoAndStickerImageShare *shareCtl = [[InstagramStoriesVideoAndStickerImageShare alloc] init];
             [shareCtl shareSingle:options failureCallback: failureCallback successCallback: successCallback];
         } else if([social isEqualToString:@"email"]) {
             NSLog(@"TRY OPEN email");
