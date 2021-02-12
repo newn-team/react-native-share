@@ -50,6 +50,7 @@
 #import "LINEShare.h"
 #import "RNShareActivityItemSource.h"
 #import "Utils.h"
+#import "InstagramStoriesVideoAndStickerImageShare.h"
 
 @implementation RNShare
 
