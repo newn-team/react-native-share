@@ -15,7 +15,10 @@
 #import "React/RCTLog.h"   // Required when used as a Pod in a Swift project
 #endif
 
+#import "InstagramStoriesVideoAndStickerImageShare.h"
+
 @implementation InstagramStoriesVideoAndStickerImageShare
+RCT_EXPORT_MODULE();
 
 - (void)backgroundVideo:(NSData *)backgroundVideo stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL
 {
