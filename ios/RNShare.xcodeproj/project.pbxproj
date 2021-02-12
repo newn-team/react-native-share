@@ -178,8 +178,8 @@
 			files = (
 				F1A1AD582444B09B00E32E33 /* FacebookStories.m in Sources */,
 				6D697F8423A86EBC00F754A1 /* RNShareActivityItemSource.m in Sources */,
-				B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */,
 				CE0C76371E9E7DE100ED396E /* InstagramShare.m in Sources */,
+				B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */,
 				4EED9CAF24F5A2EB006505C4 /* Utils.m in Sources */,
 				B3EEE48E1D4844E7008422B6 /* GooglePlusShare.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNShare.m in Sources */,
