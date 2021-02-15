@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 
-import com.facebook.react.common.ReactConstants;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
