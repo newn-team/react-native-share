@@ -12,12 +12,12 @@ import com.facebook.react.bridge.ReadableMap;
 
 import cl.json.ShareFile;
 
-public class InstagramStoriesVideoAndStickerImageShare extends SingleShareIntent {
+public class InstagramStoriesSfm extends SingleShareIntent {
 
     private static final String PACKAGE = "com.instagram.android";
     private static final String PLAY_STORE_LINK = "market://details?id=com.instagram.android";
 
-    public InstagramStoriesVideoAndStickerImageShare(ReactApplicationContext reactContext) {
+    public InstagramStoriesSfm(ReactApplicationContext reactContext) {
         super(reactContext);
         this.setIntent(new Intent("com.instagram.share.ADD_TO_STORY"));
     }

@@ -15,7 +15,7 @@
 		B33C228B1D442577006BCD98 /* EmailShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B33C228A1D442576006BCD98 /* EmailShare.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNShare.m */; };
 		B3EEE48E1D4844E7008422B6 /* GooglePlusShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EEE48D1D4844E7008422B6 /* GooglePlusShare.m */; };
-		B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */ = {isa = PBXBuildFile; fileRef = B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */; };
+		B76F297C25D60F9A00BB7E89 /* InstagramStoriesSfm.m in Sources */ = {isa = PBXBuildFile; fileRef = B76F297B25D60F9A00BB7E89 /* InstagramStoriesSfm.m */; };
 		CE0C76371E9E7DE100ED396E /* InstagramShare.m in Sources */ = {isa = PBXBuildFile; fileRef = CE0C76361E9E7DE100ED396E /* InstagramShare.m */; };
 		F1A1AD582444B09B00E32E33 /* FacebookStories.m in Sources */ = {isa = PBXBuildFile; fileRef = F1A1AD572444B09B00E32E33 /* FacebookStories.m */; };
 		FCC7BB4F221457EF00E1EA39 /* InstagramStories.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC7BB4E221457EF00E1EA39 /* InstagramStories.m */; };
@@ -51,8 +51,8 @@
 		B3E7B5891CC2AC0600A0062D /* RNShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNShare.m; sourceTree = "<group>"; };
 		B3EEE48D1D4844E7008422B6 /* GooglePlusShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GooglePlusShare.m; sourceTree = "<group>"; };
 		B3EEE48F1D4844F4008422B6 /* GooglePlusShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GooglePlusShare.h; sourceTree = "<group>"; };
-		B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InstagramStoriesVideoAndStickerImageShare.m; sourceTree = "<group>"; };
-		B76F297E25D60FE200BB7E89 /* InstagramStoriesVideoAndStickerImageShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstagramStoriesVideoAndStickerImageShare.h; sourceTree = "<group>"; };
+		B76F297B25D60F9A00BB7E89 /* InstagramStoriesSfm.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InstagramStoriesSfm.m; sourceTree = "<group>"; };
+		B76F297E25D60FE200BB7E89 /* InstagramStoriesSfm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstagramStoriesSfm.h; sourceTree = "<group>"; };
 		CE0C76361E9E7DE100ED396E /* InstagramShare.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InstagramShare.m; sourceTree = "<group>"; };
 		CE0C76621E9E869300ED396E /* InstagramShare.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstagramShare.h; sourceTree = "<group>"; };
 		F1A1AD562444B09B00E32E33 /* FacebookStories.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FacebookStories.h; sourceTree = "<group>"; };
@@ -113,8 +113,8 @@
 				FCC7BB4E221457EF00E1EA39 /* InstagramStories.m */,
 				F1A1AD562444B09B00E32E33 /* FacebookStories.h */,
 				F1A1AD572444B09B00E32E33 /* FacebookStories.m */,
-				B76F297B25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m */,
-				B76F297E25D60FE200BB7E89 /* InstagramStoriesVideoAndStickerImageShare.h */,
+				B76F297B25D60F9A00BB7E89 /* InstagramStoriesSfm.m */,
+				B76F297E25D60FE200BB7E89 /* InstagramStoriesSfm.h */,
 			);
 			name = social;
 			sourceTree = "<group>";
@@ -179,7 +179,7 @@
 				F1A1AD582444B09B00E32E33 /* FacebookStories.m in Sources */,
 				6D697F8423A86EBC00F754A1 /* RNShareActivityItemSource.m in Sources */,
 				CE0C76371E9E7DE100ED396E /* InstagramShare.m in Sources */,
-				B76F297C25D60F9A00BB7E89 /* InstagramStoriesVideoAndStickerImageShare.m in Sources */,
+				B76F297C25D60F9A00BB7E89 /* InstagramStoriesSfm.m in Sources */,
 				4EED9CAF24F5A2EB006505C4 /* Utils.m in Sources */,
 				B3EEE48E1D4844E7008422B6 /* GooglePlusShare.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNShare.m in Sources */,

@@ -1,5 +1,5 @@
 //
-//  InstagramStoriesVideoAndStickerImageShare.m
+//  InstagramStoriesSfm.m
 //  RNShare
 //
 //  Created by Shota Saito on 2021/02/12.
@@ -15,9 +15,9 @@
 #import "React/RCTLog.h"   // Required when used as a Pod in a Swift project
 #endif
 
-#import "InstagramStoriesVideoAndStickerImageShare.h"
+#import "InstagramStoriesSfm.h"
 
-@implementation InstagramStoriesVideoAndStickerImageShare
+@implementation InstagramStoriesSfm
 RCT_EXPORT_MODULE();
 
 - (void)backgroundVideo:(NSData *)backgroundVideo stickerImage:(NSData *)stickerImage attributionURL:(NSString *)attributionURL

@@ -220,7 +220,7 @@ class RNShare {
     WHATSAPP: NativeModules.RNShare.WHATSAPP || 'whatsapp',
     INSTAGRAM: NativeModules.RNShare.INSTAGRAM || 'instagram',
     INSTAGRAM_STORIES: NativeModules.RNShare.INSTAGRAM_STORIES || 'instagramstories',
-    INSTAGRAM_STORIES_SFM: NativeModules.RNShare.INSTAGRAM_STORIES_SFM || 'instagramStories',
+    INSTAGRAM_STORIES_SFM: NativeModules.RNShare.INSTAGRAM_STORIES_SFM || 'instagramStoriesSfm',
     GOOGLEPLUS: NativeModules.RNShare.GOOGLEPLUS || 'googleplus',
     EMAIL: NativeModules.RNShare.EMAIL || 'email',
     PINTEREST: NativeModules.RNShare.PINTEREST || 'pinterest',

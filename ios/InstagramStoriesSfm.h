@@ -1,5 +1,5 @@
 //
-//  InstagramStoriesVideoAndStickerImageShare.h
+//  InstagramStoriesSfm.h
 //  RNShare
 //
 //  Created by Shota Saito on 2021/02/12.
@@ -47,7 +47,7 @@
 #else
 #import "React/RCTUtils.h"   // Required when used as a Pod in a Swift project
 #endif
-@interface InstagramStoriesVideoAndStickerImageShare : NSObject <RCTBridgeModule>
+@interface InstagramStoriesSfm : NSObject <RCTBridgeModule>
 
 - (void *) shareSingle:(NSDictionary *)options failureCallback:(RCTResponseErrorBlock)failureCallback successCallback:(RCTResponseSenderBlock)successCallback;
 @end
