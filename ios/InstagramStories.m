@@ -98,6 +98,7 @@ backgroundBottomColor:(NSString *)backgroundBottomColor
     }
 }
 
+
 - (void)shareSingle:(NSDictionary *)options
     failureCallback:(RCTResponseErrorBlock)failureCallback
     successCallback:(RCTResponseSenderBlock)successCallback {
