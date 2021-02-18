@@ -23,7 +23,7 @@
     float videoDurationSeconds = CMTimeGetSeconds(videoDuration);
 
     NSLog(@"Video duration: %f seconds for file %@", videoDurationSeconds, videoAsset.URL.absoluteString);
-
+        
     NSURL * shareURL;
     // Instagram doesn't allow sharing videos longer than 60 seconds on iOS anymore. (next button is not responding, trim is unavailable)
     if (videoDurationSeconds <= 60.0f) {
@@ -33,7 +33,7 @@
     } else {
         shareURL = [NSURL URLWithString:@"instagram://camera"];
     }
-
+    
     if ([[UIApplication sharedApplication] canOpenURL: shareURL]) {
         [[UIApplication sharedApplication] openURL: shareURL];
         successCallback(@[]);
